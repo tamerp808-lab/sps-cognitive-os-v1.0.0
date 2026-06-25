@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ========================================
+         SPS COMPANION — PERMISSIONS
+         ========================================
+
+         SPS is local-first: NO INTERNET permission by default.
+         It talks to the SPS Rust kernel running on-device
+         (via Termux or a bundled native library) over 127.0.0.1.
+
+         Optional INTERNET permission is for remote LLM providers
+         (OpenAI/Anthropic/OpenRouter) when configured by the user.
+    -->
+
+    <!-- Audio recording — required for wake word + voice commands -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- Foreground service — keeps SPS alive when app is closed -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+
+    <!-- Post notifications (Android 13+) — for the persistent SPS notification -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Wake lock — keep CPU alive during wake word listening -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- Overlay window — floating SPS bubble over other apps -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- Vibrate — haptic feedback on wake word detection -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Boot receiver — restart SPS service on device boot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Query installed apps — for "open WhatsApp" style commands -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <!-- Optional: network access for remote LLM providers (off by default) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- ========================================
+         FEATURES
+         ======================================== -->
+    <uses-feature android:name="android.hardware.microphone" android:required="true" />
+
+    <!-- ========================================
+         APPLICATION
+         ======================================== -->
+    <application
+        android:name=".SpsApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SpsCompanion"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="34">
+
+        <!-- ============== MAIN ACTIVITY ============== -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.SpsCompanion">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Custom URL scheme: sps://command?text=... -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="sps" />
+            </intent-filter>
+
+            <!-- Share target: "Share to SPS" -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+            <!-- App shortcuts: long-press icon → quick actions -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+
+        <!-- ============== FOREGROUND SERVICE (the persistent SPS connection) ============== -->
+        <service
+            android:name=".service.SpsForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse|microphone|connectedDevice">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Personal AI companion — wake word detection, voice commands, and persistent connection to local SPS kernel" />
+        </service>
+
+        <!-- ============== WAKE WORD SERVICE (always-listening "Hey SPS") ============== -->
+        <service
+            android:name=".service.WakeWordService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <!-- ============== OVERLAY BUBBLE SERVICE (floating assistant) ============== -->
+        <service
+            android:name=".overlay.OverlayBubbleService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Floating SPS assistant overlay" />
+        </service>
+
+        <!-- ============== ACCESSIBILITY SERVICE (screen reading + action automation) ============== -->
+        <service
+            android:name=".service.SpsAccessibilityService"
+            android:enabled="true"
+            android:exported="false"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- ============== NOTIFICATION LISTENER (read/dismiss notifications) ============== -->
+        <service
+            android:name=".service.SpsNotificationListener"
+            android:enabled="true"
+            android:exported="false"
+            android:label="@string/notification_listener_label"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- ============== QUICK SETTINGS TILE (one-tap SPS) ============== -->
+        <service
+            android:name=".service.SpsTileService"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@drawable/ic_sps"
+            android:label="@string/quick_settings_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
+        </service>
+
+        <!-- ============== BOOT RECEIVER (restart SPS on device boot) ============== -->
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- ============== WIDGET PROVIDER (home screen voice widget) ============== -->
+        <receiver
+            android:name=".receiver.SpsWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/sps_widget_info" />
+        </receiver>
+
+    </application>
+
+    <!-- Required for querying other apps (Android 11+) — used by device control -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+        </intent>
+    </queries>
+</manifest>

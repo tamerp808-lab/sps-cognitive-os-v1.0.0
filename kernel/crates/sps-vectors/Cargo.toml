@@ -1,0 +1,23 @@
+[package]
+name = "sps-vectors"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS Vector Search (Phase 3.5) — in-memory HNSW-like index + embedding interface"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-memory = { path = "../sps-memory" }
+sps-effects = { path = "../sps-effects" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+
+[dev-dependencies]
+sps-storage-memory = { path = "../sps-storage-memory" }

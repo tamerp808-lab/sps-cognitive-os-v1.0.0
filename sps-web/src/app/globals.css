@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-bg-base text-fg antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-bg-surface/80 backdrop-blur-xl border border-border rounded-2xl;
+  }
+  .stat-card {
+    @apply bg-bg-surface border border-border rounded-xl p-5 transition-all hover:border-accent/50;
+  }
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-fg-muted hover:text-fg hover:bg-bg-hover transition-colors cursor-pointer;
+  }
+  .nav-item.active {
+    @apply text-fg bg-bg-hover;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-bg-elevated border border-border text-fg text-sm font-medium hover:bg-bg-hover transition-colors;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-fg-muted text-sm hover:text-fg hover:bg-bg-hover transition-colors;
+  }
+  .input {
+    @apply w-full px-3 py-2 rounded-lg bg-bg-elevated border border-border text-fg text-sm placeholder:text-fg-subtle focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium;
+  }
+  .badge-success {
+    @apply bg-success/15 text-success border border-success/30;
+  }
+  .badge-warning {
+    @apply bg-warning/15 text-warning border border-warning/30;
+  }
+  .badge-danger {
+    @apply bg-danger/15 text-danger border border-danger/30;
+  }
+  .badge-accent {
+    @apply bg-accent/15 text-accent border border-accent/30;
+  }
+  .badge-muted {
+    @apply bg-bg-hover text-fg-muted border border-border;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}

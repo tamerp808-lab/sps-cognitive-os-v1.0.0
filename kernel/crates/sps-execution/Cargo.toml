@@ -1,0 +1,21 @@
+[package]
+name = "sps-execution"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS Execution Layer (Phase 8) — code analysis, project generation, tool chains"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+
+[dev-dependencies]
+sps-storage-memory = { path = "../sps-storage-memory" }

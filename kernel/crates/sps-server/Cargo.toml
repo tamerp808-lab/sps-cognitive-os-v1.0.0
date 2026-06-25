@@ -1,0 +1,56 @@
+[package]
+name = "sps-server"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS HTTP API server — exposes the kernel to the web UI"
+
+[[bin]]
+name = "sps-server"
+path = "src/main.rs"
+
+[lib]
+name = "sps_server"
+path = "src/lib.rs"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-storage-sqlite = { path = "../sps-storage-sqlite" }
+sps-storage-memory = { path = "../sps-storage-memory" }
+sps-effects = { path = "../sps-effects" }
+sps-bus = { path = "../sps-bus" }
+sps-memory = { path = "../sps-memory" }
+sps-world = { path = "../sps-world" }
+sps-goals = { path = "../sps-goals" }
+sps-planner = { path = "../sps-planner" }
+sps-reasoning = { path = "../sps-reasoning" }
+sps-agents = { path = "../sps-agents" }
+sps-reflection = { path = "../sps-reflection" }
+sps-providers-http = { path = "../sps-providers-http" }
+sps-autonomy = { path = "../sps-autonomy" }
+sps-vectors = { path = "../sps-vectors" }
+sps-llm = { path = "../sps-llm" }
+sps-code-intel = { path = "../sps-code-intel" }
+sps-workspace = { path = "../sps-workspace" }
+sps-git = { path = "../sps-git" }
+sps-improvement = { path = "../sps-improvement" }
+sps-execution = { path = "../sps-execution" }
+sps-factory = { path = "../sps-factory" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+axum = { version = "0.8", features = ["json", "ws"] }
+tokio = { version = "1", features = ["full"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace", "fs"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+hex = "0.4"
+futures-util = "0.3"
+clap = { version = "4", features = ["derive"] }
+async-stream = "0.3"

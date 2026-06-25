@@ -1,0 +1,24 @@
+[package]
+name = "sps-agents"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS Agent Runtime — 6 archetypes (Architect, Developer, Reviewer, Tester, DevOps, Researcher)"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-effects = { path = "../sps-effects" }
+sps-goals = { path = "../sps-goals" }
+sps-memory = { path = "../sps-memory" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+
+[dev-dependencies]
+sps-storage-memory = { path = "../sps-storage-memory" }

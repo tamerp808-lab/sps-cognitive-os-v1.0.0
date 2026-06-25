@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="talk"
+        android:enabled="true"
+        android:icon="@drawable/ic_mic"
+        android:shortcutShortLabel="@string/action_talk"
+        android:shortcutLongLabel="@string/action_talk">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.sps.companion"
+            android:targetClass="com.sps.companion.MainActivity">
+            <extra android:name="sps.action" android:value="talk" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="goals"
+        android:enabled="true"
+        android:icon="@drawable/ic_goals"
+        android:shortcutShortLabel="@string/action_view_goals"
+        android:shortcutLongLabel="@string/action_view_goals">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.sps.companion"
+            android:targetClass="com.sps.companion.MainActivity">
+            <extra android:name="sps.action" android:value="goals" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="memory"
+        android:enabled="true"
+        android:icon="@drawable/ic_memory"
+        android:shortcutShortLabel="@string/action_view_memory"
+        android:shortcutLongLabel="@string/action_view_memory">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.sps.companion"
+            android:targetClass="com.sps.companion.MainActivity">
+            <extra android:name="sps.action" android:value="memory" />
+        </intent>
+    </shortcut>
+</shortcuts>

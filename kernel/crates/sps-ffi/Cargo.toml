@@ -1,0 +1,34 @@
+[package]
+name = "sps-ffi"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS FFI bridge — exposes the kernel to TypeScript via napi-rs"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-storage-sqlite = { path = "../sps-storage-sqlite" }
+sps-storage-memory = { path = "../sps-storage-memory" }
+sps-effects = { path = "../sps-effects" }
+sps-bus = { path = "../sps-bus" }
+sps-memory = { path = "../sps-memory" }
+sps-world = { path = "../sps-world" }
+sps-goals = { path = "../sps-goals" }
+sps-agents = { path = "../sps-agents" }
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+# napi-rs is optional — when not enabled, the crate builds as a pure Rust
+# library. Enable the `napi` feature to produce the Node.js addon.
+napi = { version = "2", features = ["napi8"], optional = true }
+napi-derive = { version = "2", optional = true }
+
+[features]
+default = []
+napi = ["dep:napi", "dep:napi-derive"]

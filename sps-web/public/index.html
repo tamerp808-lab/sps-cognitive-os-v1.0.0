@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPS — Cognitive Operating System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: { base: '#0a0a0b', surface: '#111113', elevated: '#16161a', hover: '#1c1c21' },
+            border: { DEFAULT: '#27272a', subtle: '#1f1f23' },
+            fg: { DEFAULT: '#fafafa', muted: '#a1a1aa', subtle: '#71717a' },
+            accent: { DEFAULT: '#6366f1', hover: '#4f46e5', muted: '#4338ca' },
+            success: '#10b981', warning: '#f59e0b', danger: '#ef4444',
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], mono: ['JetBrains Mono', 'Menlo', 'monospace'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0a0a0b; color: #fafafa; font-family: Inter, system-ui, sans-serif; }
+    .glass-panel { background: rgba(17,17,19,0.8); backdrop-filter: blur(12px); border: 1px solid #27272a; border-radius: 1rem; }
+    .stat-card { background: #111113; border: 1px solid #27272a; border-radius: 0.75rem; padding: 1.25rem; transition: all 0.2s; }
+    .stat-card:hover { border-color: rgba(99,102,241,0.5); }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.875rem; color: #a1a1aa; cursor: pointer; transition: all 0.15s; text-decoration: none; }
+    .nav-item:hover { color: #fafafa; background: #1c1c21; }
+    .nav-item.active { color: #fafafa; background: #1c1c21; }
+    .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 0.5rem; background: #6366f1; color: white; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: background 0.15s; }
+    .btn-primary:hover { background: #4f46e5; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 0.5rem; background: #16161a; border: 1px solid #27272a; color: #fafafa; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+    .btn-secondary:hover { background: #1c1c21; }
+    .btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.375rem 0.75rem; border-radius: 0.5rem; color: #a1a1aa; font-size: 0.875rem; cursor: pointer; background: transparent; border: none; transition: all 0.15s; }
+    .btn-ghost:hover { color: #fafafa; background: #1c1c21; }
+    .input { width: 100%; padding: 0.5rem 0.75rem; border-radius: 0.5rem; background: #16161a; border: 1px solid #27272a; color: #fafafa; font-size: 0.875rem; }
+    .input:focus { outline: none; border-color: #6366f1; }
+    .input::placeholder { color: #71717a; }
+    .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 500; }
+    .badge-success { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-warning { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-danger { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+    .badge-accent { background: rgba(99,102,241,0.15); color: #6366f1; border: 1px solid rgba(99,102,241,0.3); }
+    .badge-muted { background: #1c1c21; color: #a1a1aa; border: 1px solid #27272a; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+    .page { display: none; }
+    .page.active { display: block; }
+  </style>
+</head>
+<body class="font-sans min-h-screen flex">
+
+<aside class="fixed left-0 top-0 bottom-0 w-64 bg-bg-surface border-r border-border flex flex-col" style="background:#111113;border-right:1px solid #27272a;">
+  <div class="p-6 border-b border-border" style="border-bottom:1px solid #27272a;">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#9333ea);">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+      </div>
+      <div>
+        <div class="font-bold text-lg leading-none">SPS</div>
+        <div class="text-[11px] text-fg-subtle mt-1 leading-none" style="color:#71717a;">Cognitive OS</div>
+      </div>
+    </div>
+  </div>
+  <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto" id="nav">
+    <a class="nav-item active" data-page="dashboard"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Dashboard</a>
+    <a class="nav-item" data-page="providers"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>AI Providers</a>
+    <a class="nav-item" data-page="chat"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Chat</a>
+    <a class="nav-item" data-page="memory"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>Memory</a>
+    <a class="nav-item" data-page="agents"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>Agents</a>
+    <a class="nav-item" data-page="goals"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Goals</a>
+    <a class="nav-item" data-page="events"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Events</a>
+    <a class="nav-item" data-page="console"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Console</a>
+    <a class="nav-item" data-page="settings"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Settings</a>
+  </nav>
+  <div class="p-4 border-t border-border" style="border-top:1px solid #27272a;">
+    <div class="text-[11px] uppercase tracking-wider mb-2" style="color:#71717a;">Kernel Status</div>
+    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-success animate-pulse" style="background:#10b981;"></span><span class="text-xs" style="color:#a1a1aa;">Online</span></div>
+    <div class="text-[10px] mt-1 font-mono" style="color:#71717a;">v1.0.0 · local-first</div>
+  </div>
+</aside>
+
+<main class="flex-1 ml-64 min-h-screen">
+  <div class="max-w-[1400px] mx-auto px-8 py-8" id="content"></div>
+</main>
+
+<script>
+const API = '/api';
+async function apiGet(path) { const r = await fetch(API + path); if (!r.ok) throw new Error(await r.text()); return r.json(); }
+async function apiPost(path, body) { const r = await fetch(API + path, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }); if (!r.ok) throw new Error(await r.text()); return r.json(); }
+async function apiDelete(path) { const r = await fetch(API + path, { method: 'DELETE' }); if (!r.ok) throw new Error(await r.text()); return r.json(); }
+
+function fmt(n) { if (n>=1e6) return (n/1e6).toFixed(1)+'M'; if (n>=1e3) return (n/1e3).toFixed(1)+'K'; return String(n); }
+function fmtHash(h, l=16) { if (!h) return '—'; return h.length > l ? h.slice(0,l)+'…' : h; }
+function timeAgo(ms) { if (!ms) return 'never'; const d = Date.now() - ms; if (d<60000) return Math.floor(d/1000)+'s ago'; if (d<3600000) return Math.floor(d/60000)+'m ago'; if (d<86400000) return Math.floor(d/3600000)+'h ago'; return Math.floor(d/86400000)+'d ago'; }
+
+const PRESETS = [
+  { kind:'openai', name:'OpenAI', apiUrl:'https://api.openai.com/v1', models:['gpt-4o','gpt-4o-mini','gpt-4-turbo','o1-preview'], requiresKey:true, color:'from-emerald-500 to-teal-500' },
+  { kind:'anthropic', name:'Anthropic', apiUrl:'https://api.anthropic.com', models:['claude-3-5-sonnet-20241022','claude-3-5-haiku-20241022','claude-3-opus-20240229'], requiresKey:true, color:'from-amber-500 to-orange-500' },
+  { kind:'openrouter', name:'OpenRouter', apiUrl:'https://openrouter.ai/api/v1', models:['anthropic/claude-3.5-sonnet','openai/gpt-4o','google/gemini-pro-1.5','meta-llama/llama-3.1-70b-instruct'], requiresKey:true, color:'from-blue-500 to-indigo-500' },
+  { kind:'groq', name:'Groq', apiUrl:'https://api.groq.com/openai/v1', models:['llama-3.3-70b-versatile','llama-3.1-8b-instant','mixtral-8x7b-32768'], requiresKey:true, color:'from-orange-500 to-red-500' },
+  { kind:'deepseek', name:'DeepSeek', apiUrl:'https://api.deepseek.com/v1', models:['deepseek-chat','deepseek-reasoner'], requiresKey:true, color:'from-violet-500 to-purple-500' },
+  { kind:'ollama', name:'Ollama (Local)', apiUrl:'http://localhost:11434', models:['llama3.2','qwen2.5','mistral','phi3'], requiresKey:false, color:'from-slate-500 to-zinc-500' },
+  { kind:'lmstudio', name:'LM Studio', apiUrl:'http://localhost:1234/v1', models:['local-model'], requiresKey:false, color:'from-cyan-500 to-blue-500' },
+  { kind:'custom', name:'Custom', apiUrl:'', models:[], requiresKey:false, color:'from-fuchsia-500 to-pink-500' },
+];
+
+let currentPage = 'dashboard';
+let selectedPreset = PRESETS[0];
+let providerForm = { id:'', name:'', api_url:PRESETS[0].apiUrl, api_key:'', model_name:PRESETS[0].models[0]||'' };
+let chatMessages = [];
+let chatInput = '';
+let chatSending = false;
+let consoleHistory = [];
+
+function render() {
+  const c = document.getElementById('content');
+  if (currentPage === 'dashboard') renderDashboard(c);
+  else if (currentPage === 'providers') renderProviders(c);
+  else if (currentPage === 'chat') renderChat(c);
+  else if (currentPage === 'memory') renderMemory(c);
+  else if (currentPage === 'agents') renderAgents(c);
+  else if (currentPage === 'goals') renderGoals(c);
+  else if (currentPage === 'events') renderEvents(c);
+  else if (currentPage === 'console') renderConsole(c);
+  else if (currentPage === 'settings') renderSettings(c);
+}
+
+// ... (each render function defined below)
+document.getElementById('nav').addEventListener('click', (e) => {
+  const item = e.target.closest('.nav-item');
+  if (!item) return;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  item.classList.add('active');
+  currentPage = item.dataset.page;
+  render();
+});
+
+render();
+setInterval(() => { if (currentPage === 'dashboard' || currentPage === 'events') render(); }, 3000);
+</script>
+</body>
+</html>

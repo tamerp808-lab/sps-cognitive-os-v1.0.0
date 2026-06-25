@@ -1,0 +1,24 @@
+[package]
+name = "sps-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS Kernel Core — Event Store, Reducers, Canonical State, Replay Engine"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+parking_lot.workspace = true
+hex.workspace = true
+
+[dev-dependencies]
+sps-storage-memory = { path = "../sps-storage-memory" }
+sps-storage-sqlite = { path = "../sps-storage-sqlite" }
+tempfile = "3"

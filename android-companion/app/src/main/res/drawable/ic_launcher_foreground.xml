@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPS launcher icon foreground — brain/orbit logo on transparent bg -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Background safe zone: 72x72 centered at (54, 54) -->
+    <group
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:translateX="21.6"
+        android:translateY="21.6">
+        <!-- Brain/orbit outer ring -->
+        <path
+            android:fillColor="#5B7CFA"
+            android:pathData="M54,18c-19.9,0 -36,16.1 -36,36s16.1,36 36,36 36,-16.1 36,-36 -16.1,-36 -36,-36zM54,30c13.3,0 24,10.7 24,24s-10.7,24 -24,24 -24,-10.7 -24,-24 10.7,-24 24,-24z" />
+        <!-- Orbit dot 1 -->
+        <path
+            android:fillColor="#00E5FF"
+            android:pathData="M78,54m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0" />
+        <!-- Orbit dot 2 -->
+        <path
+            android:fillColor="#06FFE0"
+            android:pathData="M54,30m-5,0a5,5 0,1 1,10 0a5,5 0,1 1,-10 0" />
+        <!-- Core -->
+        <path
+            android:fillColor="#7C3AED"
+            android:pathData="M54,54m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0" />
+    </group>
+</vector>

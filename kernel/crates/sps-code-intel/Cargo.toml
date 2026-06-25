@@ -1,0 +1,23 @@
+[package]
+name = "sps-code-intel"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS Code Intelligence — symbol extraction, codebase index, search"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-world = { path = "../sps-world" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+regex = "1"
+
+[dev-dependencies]
+sps-storage-memory = { path = "../sps-storage-memory" }

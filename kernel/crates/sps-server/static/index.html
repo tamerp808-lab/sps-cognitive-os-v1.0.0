@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SPS — Cognitive Operating System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={darkMode:'class',theme:{extend:{colors:{bg:{base:'#0a0a0b',surface:'#111113',elevated:'#16161a',hover:'#1c1c21'},fg:{DEFAULT:'#fafafa',muted:'#a1a1aa',subtle:'#71717a'},accent:{DEFAULT:'#6366f1',hover:'#4f46e5'},success:'#10b981',warning:'#f59e0b',danger:'#ef4444'},fontFamily:{sans:['Inter','system-ui','sans-serif'],mono:['JetBrains Mono','Menlo','monospace']}}}}
+</script>
+<style>
+body{background:#0a0a0b;color:#fafafa;font-family:Inter,system-ui,sans-serif;margin:0}
+.glass{background:rgba(17,17,19,.8);backdrop-filter:blur(12px);border:1px solid #27272a;border-radius:1rem}
+.stat{background:#111113;border:1px solid #27272a;border-radius:.75rem;padding:1.25rem;transition:all .2s}
+.stat:hover{border-color:rgba(99,102,241,.5)}
+.nav{display:flex;align-items:center;gap:.75rem;padding:.5rem .75rem;border-radius:.5rem;font-size:.875rem;color:#a1a1aa;cursor:pointer;transition:all .15s}
+.nav:hover{color:#fafafa;background:#1c1c21}
+.nav.active{color:#fafafa;background:#1c1c21}
+.btn1{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.5rem 1rem;border-radius:.5rem;background:#6366f1;color:#fff;font-size:.875rem;font-weight:500;cursor:pointer;border:none;transition:.15s}
+.btn1:hover{background:#4f46e5}
+.btn1:disabled{opacity:.5;cursor:not-allowed}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.5rem 1rem;border-radius:.5rem;background:#16161a;border:1px solid #27272a;color:#fafafa;font-size:.875rem;font-weight:500;cursor:pointer;transition:.15s}
+.btn2:hover{background:#1c1c21}
+.btn3{display:inline-flex;align-items:center;gap:.5rem;padding:.375rem .75rem;border-radius:.5rem;color:#a1a1aa;font-size:.875rem;cursor:pointer;background:transparent;border:none;transition:.15s}
+.btn3:hover{color:#fafafa;background:#1c1c21}
+.inp{width:100%;padding:.5rem .75rem;border-radius:.5rem;background:#16161a;border:1px solid #27272a;color:#fafafa;font-size:.875rem;box-sizing:border-box}
+.inp:focus{outline:none;border-color:#6366f1}
+.inp::placeholder{color:#71717a}
+.badge{display:inline-flex;align-items:center;gap:.25rem;padding:.125rem .5rem;border-radius:.375rem;font-size:.75rem;font-weight:500}
+.b-s{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)}
+.b-w{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3)}
+.b-d{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.b-a{background:rgba(99,102,241,.15);color:#6366f1;border:1px solid rgba(99,102,241,.3)}
+.b-m{background:#1c1c21;color:#a1a1aa;border:1px solid #27272a}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#27272a;border-radius:4px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+</style>
+</head>
+<body class="font-sans min-h-screen flex">
+
+<aside style="position:fixed;left:0;top:0;bottom:0;width:16rem;background:#111113;border-right:1px solid #27272a;display:flex;flex-direction:column;">
+  <div style="padding:1.5rem;border-bottom:1px solid #27272a;">
+    <div style="display:flex;align-items:center;gap:.75rem;">
+      <div style="width:2.25rem;height:2.25rem;border-radius:.75rem;background:linear-gradient(135deg,#6366f1,#9333ea);display:flex;align-items:center;justify-content:center;">
+        <svg style="width:1.25rem;height:1.25rem;color:#fff" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:1.125rem;line-height:1;">SPS</div>
+        <div style="font-size:.6875rem;color:#71717a;margin-top:.25rem;line-height:1;">Cognitive OS</div>
+      </div>
+    </div>
+  </div>
+  <nav id="nav" style="flex:1;padding:.75rem;overflow-y:auto;">
+    <a class="nav active" data-p="dashboard">📊 Dashboard</a>
+    <a class="nav" data-p="providers">⚡ AI Providers</a>
+    <a class="nav" data-p="chat">💬 Chat</a>
+    <a class="nav" data-p="memory">🧠 Memory</a>
+    <a class="nav" data-p="agents">🤖 Agents</a>
+    <a class="nav" data-p="goals">🎯 Goals</a>
+    <a class="nav" data-p="events">📜 Events</a>
+    <a class="nav" data-p="code">🔍 Code</a>
+    <a class="nav" data-p="console">⌨️ Console</a>
+    <a class="nav" data-p="code">🔧 Code Explorer</a>
+    <a class="nav" data-p="workspace">📁 Workspace</a>
+    <a class="nav" data-p="git">🌿 Git</a>
+    <a class="nav" data-p="settings">⚙️ Settings</a>
+  </nav>
+  <div style="padding:1rem;border-top:1px solid #27272a;">
+    <div style="font-size:.6875rem;text-transform:uppercase;letter-spacing:.05em;color:#71717a;margin-bottom:.5rem;">Kernel Status</div>
+    <div style="display:flex;align-items:center;gap:.5rem;"><span style="width:.5rem;height:.5rem;border-radius:50%;background:#10b981;animation:pulse 2s infinite;"></span><span style="font-size:.75rem;color:#a1a1aa;">Online</span></div>
+    <div style="font-size:.625rem;margin-top:.25rem;font-family:monospace;color:#71717a;">v1.0.0 · ⌘K palette</div>
+  </div>
+</aside>
+
+<main style="flex:1;margin-left:16rem;min-height:100vh;">
+  <div id="content" style="max-width:87.5rem;margin:0 auto;padding:2rem;"></div>
+</main>
+
+<script>
+const API='/api';
+const G=async(p)=>{const r=await fetch(API+p);if(!r.ok)throw new Error(await r.text());return r.json()};
+const P=async(p,b)=>{const r=await fetch(API+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});if(!r.ok)throw new Error(await r.text());return r.json()};
+const D=async(p)=>{const r=await fetch(API+p,{method:'DELETE'});if(!r.ok)throw new Error(await r.text());return r.json()};
+const fmt=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':String(n);
+const fh=(h,l=16)=>!h?'—':h.length>l?h.slice(0,l)+'…':h;
+const ta=ms=>{if(!ms)return'never';const d=Date.now()-ms;if(d<6e4)return Math.floor(d/1e3)+'s ago';if(d<36e5)return Math.floor(d/6e4)+'m ago';if(d<864e5)return Math.floor(d/36e5)+'h ago';return Math.floor(d/864e5)+'d ago'};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const PRESETS=[
+  {kind:'openai',name:'OpenAI',apiUrl:'https://api.openai.com/v1',models:['gpt-4o','gpt-4o-mini','gpt-4-turbo','o1-preview'],requiresKey:true,color:'linear-gradient(135deg,#10b981,#14b8a6)'},
+  {kind:'anthropic',name:'Anthropic',apiUrl:'https://api.anthropic.com',models:['claude-3-5-sonnet-20241022','claude-3-5-haiku-20241022','claude-3-opus-20240229'],requiresKey:true,color:'linear-gradient(135deg,#f59e0b,#f97316)'},
+  {kind:'openrouter',name:'OpenRouter',apiUrl:'https://openrouter.ai/api/v1',models:['anthropic/claude-3.5-sonnet','openai/gpt-4o','google/gemini-pro-1.5','meta-llama/llama-3.1-70b-instruct'],requiresKey:true,color:'linear-gradient(135deg,#3b82f6,#6366f1)'},
+  {kind:'groq',name:'Groq',apiUrl:'https://api.groq.com/openai/v1',models:['llama-3.3-70b-versatile','llama-3.1-8b-instant','mixtral-8x7b-32768'],requiresKey:true,color:'linear-gradient(135deg,#f97316,#ef4444)'},
+  {kind:'deepseek',name:'DeepSeek',apiUrl:'https://api.deepseek.com/v1',models:['deepseek-chat','deepseek-reasoner'],requiresKey:true,color:'linear-gradient(135deg,#8b5cf6,#a855f7)'},
+  {kind:'ollama',name:'Ollama (Local)',apiUrl:'http://localhost:11434',models:['llama3.2','qwen2.5','mistral','phi3'],requiresKey:false,color:'linear-gradient(135deg,#64748b,#71717a)'},
+  {kind:'lmstudio',name:'LM Studio',apiUrl:'http://localhost:1234/v1',models:['local-model'],requiresKey:false,color:'linear-gradient(135deg,#06b6d4,#3b82f6)'},
+  {kind:'custom',name:'Custom',apiUrl:'',models:[],requiresKey:false,color:'linear-gradient(135deg,#d946ef,#ec4899)'},
+];
+
+let page='dashboard',preset=PRESETS[0],form={id:'',name:'',api_url:PRESETS[0].apiUrl,api_key:'',model_name:PRESETS[0].models[0]||''},showForm=false,messages=[],chatInput='',chatSending=false,consoleHist=[],consoleType='',consolePayload='{}',healthchecks={};
+
+const el=document.getElementById('content');
+
+async function render(){
+  if(page==='dashboard')await rDash();
+  else if(page==='providers')await rProv();
+  else if(page==='chat')rChat();
+  else if(page==='memory')await rMem();
+  else if(page==='agents')await rAg();
+  else if(page==='goals')await rGoals();
+  else if(page==='events')await rEv();
+  else if(page==='console')rConsole();
+  else if(page==='code')await rCode();
+  else if(page==='workspace')await rWorkspace();
+  else if(page==='git')await rGit();
+  else if(page==='code')await rCode();
+  else if(page==='workspace')await rWorkspace();
+  else if(page==='git')await rGit();
+  else if(page==='settings')await rSet();
+}
+
+async function rDash(){
+  let s,h;
+  try{[s,h]=await Promise.all([G('/stats'),G('/health')]);}catch(e){el.innerHTML='<p style="color:#a1a1aa">Failed to load: '+esc(e.message)+'</p>';return}
+  const mt=s.memory?.total||0,gt=s.goals?.total||0,ec=s.kernel?.event_count||0,pc=s.providers?.length||0;
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">Dashboard</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:2rem;">Real-time overview of your Cognitive Operating System</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem;">
+      ${statCard('Events',fmt(ec),'Last tick: '+fmt(s.kernel?.last_tick||0),'📊','#3b82f6')}
+      ${statCard('Memories',fmt(mt),(s.memory?.links||0)+' links','🧠','#8b5cf6')}
+      ${statCard('Goals',fmt(gt),(s.goals?.active||0)+' active','🎯','#10b981')}
+      ${statCard('Providers',fmt(pc),s.default_provider?'Default: '+s.default_provider:'No default','⚡','#f59e0b')}
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;">
+      <div class="glass" style="padding:1.5rem;">
+        <h2 style="font-size:1.125rem;font-weight:600;margin-bottom:1.25rem;">🖥️ Kernel Status</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          ${field('Backend',s.kernel?.backend||'—',true)}
+          ${field('Event Count',fmt(ec),true)}
+          ${field('Last Tick',fmt(s.kernel?.last_tick||0),true)}
+          ${field('Last Hash',fh(s.kernel?.last_hash||'',24),true)}
+        </div>
+      </div>
+      <div class="glass" style="padding:1.5rem;">
+        <h2 style="font-size:1.125rem;font-weight:600;margin-bottom:1.25rem;">🧠 Memory</h2>
+        ${mt===0?'<p style="color:#71717a;font-size:.875rem;">No memories yet.</p>':Object.entries(s.memory?.by_kind||{}).map(([k,c])=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
+            <span style="font-size:.875rem;color:#a1a1aa;text-transform:capitalize;">${k}</span>
+            <div style="display:flex;align-items:center;gap:.5rem;">
+              <div style="width:6rem;height:.375rem;background:#16161a;border-radius:9999px;overflow:hidden;"><div style="height:100%;background:linear-gradient(90deg,#8b5cf6,#ec4899);width:${(c/mt)*100}%"></div></div>
+              <span style="font-family:monospace;font-size:.875rem;width:2rem;text-align:right;">${c}</span>
+            </div>
+          </div>`).join('')}
+        ${mt>0?`<div style="padding-top:.75rem;border-top:1px solid #1f1f23;margin-top:.75rem;">
+          <div style="display:flex;justify-content:space-between;font-size:.875rem;"><span style="color:#a1a1aa;">Avg strength</span><span style="font-family:monospace;">${((s.memory?.avg_strength||0)*100).toFixed(0)}%</span></div>
+        </div>`:''}
+      </div>
+    </div>
+    <div class="glass" style="padding:1.5rem;margin-top:1.5rem;">
+      <h2 style="font-size:1.125rem;font-weight:600;margin-bottom:1.25rem;">⚡ AI Providers</h2>
+      ${pc===0?`<div style="text-align:center;padding:2rem;"><p style="color:#a1a1aa;font-size:.875rem;margin-bottom:.25rem;">No providers configured</p><p style="color:#71717a;font-size:.75rem;">Add a cloud model to enable LLM-powered features</p></div>`:
+        s.providers.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem;border-radius:.5rem;background:#16161a;margin-bottom:.5rem;">
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <div style="width:2rem;height:2rem;border-radius:.5rem;background:rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;">⚡</div>
+            <div><div style="font-size:.875rem;font-weight:500;">${esc(p)}</div><div style="font-size:.75rem;color:#71717a;">Provider ID</div></div>
+          </div>
+          ${s.default_provider===p?'<span class="badge b-a">Default</span>':''}
+        </div>`).join('')}
+    </div>`;
+}
+
+function statCard(label,value,sub,icon,color){
+  return `<div class="stat" style="position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;background:${color};opacity:.08;"></div>
+    <div style="position:relative;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
+        <span style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#a1a1aa;font-weight:500;">${label}</span>
+        <span style="font-size:1.25rem;">${icon}</span>
+      </div>
+      <div style="font-size:1.875rem;font-weight:700;">${value}</div>
+      <div style="font-size:.75rem;color:#71717a;margin-top:.25rem;">${sub}</div>
+    </div>
+  </div>`;
+}
+function field(label,value,mono){return `<div><div style="font-size:.75rem;color:#71717a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;">${label}</div><div style="font-size:.875rem;${mono?'font-family:monospace;':''}">${esc(value)}</div></div>`}
+
+async function rProv(){
+  let ps;
+  try{ps=await G('/providers');}catch(e){el.innerHTML='<p style="color:#a1a1aa">'+esc(e.message)+'</p>';return}
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;">
+      <div><h1 style="font-size:1.875rem;font-weight:700;">AI Providers</h1><p style="color:#a1a1aa;margin-top:.25rem;">Connect cloud and local LLM models to your kernel</p></div>
+      <button class="btn1" onclick="showForm=!showForm;render()">➕ Add Provider</button>
+    </div>
+    ${showForm?`
+    <div class="glass" style="padding:1.5rem;margin-bottom:1.5rem;">
+      <h2 style="font-size:1.125rem;font-weight:600;margin-bottom:.25rem;">Choose a provider</h2>
+      <p style="font-size:.875rem;color:#a1a1aa;margin-bottom:1.5rem;">Select a preset or configure a custom endpoint</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;margin-bottom:1.5rem;">
+        ${PRESETS.map((p,i)=>`<button onclick="preset=PRESETS[${i}];form={id:'',name:'',api_url:p.apiUrl,api_key:'',model_name:p.models[0]||''};render()" style="padding:1rem;border-radius:.75rem;border:1px solid ${preset.kind===p.kind?'#6366f1':'#27272a'};background:${preset.kind===p.kind?'rgba(99,102,241,.1)':'#16161a'};text-align:left;cursor:pointer;transition:.15s;">
+          <div style="width:2rem;height:2rem;border-radius:.5rem;background:${p.color};margin-bottom:.5rem;"></div>
+          <div style="font-size:.875rem;font-weight:500;">${p.name}</div>
+          <div style="font-size:.6875rem;color:#71717a;text-transform:uppercase;margin-top:.25rem;">${p.requiresKey?'API key':'Local'}</div>
+        </button>`).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding-top:1rem;border-top:1px solid #27272a;">
+        <div><label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#a1a1aa;margin-bottom:.375rem;display:block;">Provider ID (optional)</label><input class="inp" placeholder="defaults to ${preset.kind}" value="${form.id}" onchange="form.id=this.value"/></div>
+        <div><label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#a1a1aa;margin-bottom:.375rem;display:block;">Display name</label><input class="inp" placeholder="${preset.name}" value="${form.name}" onchange="form.name=this.value"/></div>
+        <div style="grid-column:1/-1;"><label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#a1a1aa;margin-bottom:.375rem;display:block;">🌐 API URL</label><input class="inp" style="font-family:monospace;" placeholder="https://api.example.com/v1" value="${form.api_url}" onchange="form.api_url=this.value"/></div>
+        ${preset.requiresKey?`<div style="grid-column:1/-1;"><label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#a1a1aa;margin-bottom:.375rem;display:block;">🔑 API Key</label><input type="password" class="inp" style="font-family:monospace;" placeholder="sk-..." value="${form.api_key}" onchange="form.api_key=this.value"/><p style="font-size:.75rem;color:#71717a;margin-top:.375rem;">Stored locally. Never sent to any server except the provider.</p></div>`:''}
+        <div><label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#a1a1aa;margin-bottom:.375rem;display:block;">Model name</label>
+        ${preset.models.length>0?`<select class="inp" onchange="form.model_name=this.value">${preset.models.map(m=>`<option ${m===form.model_name?'selected':''}>${m}</option>`).join('')}</select>`:`<input class="inp" style="font-family:monospace;" placeholder="model-name" value="${form.model_name}" onchange="form.model_name=this.value"/>`}
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:.5rem;padding-top:1rem;margin-top:1rem;border-top:1px solid #27272a;">
+        <button class="btn2" onclick="showForm=false;render()">Cancel</button>
+        <button class="btn1" onclick="regProv()">Register Provider</button>
+      </div>
+    </div>`:''}
+    ${ps.providers.length===0&&!showForm?`
+    <div class="glass" style="padding:3rem;text-align:center;">
+      <div style="font-size:4rem;margin-bottom:1rem;">☁️</div>
+      <h3 style="font-size:1.125rem;font-weight:500;margin-bottom:.5rem;">No providers configured</h3>
+      <p style="font-size:.875rem;color:#a1a1aa;margin-bottom:1rem;max-width:24rem;margin-left:auto;margin-right:auto;">Add a cloud provider like OpenAI, Anthropic, or OpenRouter to enable LLM-powered reasoning, reflection, and code generation.</p>
+      <button class="btn1" onclick="showForm=true;render()">➕ Add your first provider</button>
+    </div>`:`
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;">
+      ${ps.providers.map(p=>{
+        const pr=PRESETS.find(x=>x.kind===p.kind)||PRESETS[7];
+        const hc=healthchecks[p.id];
+        return `<div class="glass" style="padding:1.25rem;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;">
+            <div style="display:flex;align-items:center;gap:.75rem;">
+              <div style="width:2.5rem;height:2.5rem;border-radius:.75rem;background:${pr.color};display:flex;align-items:center;justify-content:center;font-size:1.25rem;">⚡</div>
+              <div><div style="font-weight:600;display:flex;align-items:center;gap:.5rem;">${esc(p.name||p.id)} ${ps.default_provider===p.id?'<span class="badge b-a">Default</span>':''}</div><div style="font-size:.75rem;color:#71717a;font-family:monospace;">${p.kind}</div></div>
+            </div>
+            <button class="btn3" style="color:#ef4444;" onclick="rmProv('${p.id}')">🗑</button>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <div style="font-size:.75rem;color:#a1a1aa;font-family:monospace;margin-bottom:.25rem;">🌐 ${esc(p.api_url||'—')}</div>
+            <div style="font-size:.75rem;color:#a1a1aa;font-family:monospace;margin-bottom:.25rem;"># ${esc(p.model_name||'—')}</div>
+            <div style="font-size:.75rem;color:#a1a1aa;">🔑 ${p.has_key?'API key set':'No key required'}</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:1px solid #27272a;">
+            ${hc?`<span class="badge ${hc.healthy?'b-s':'b-d'}"><span style="width:.375rem;height:.375rem;border-radius:50%;background:${hc.healthy?'#10b981':'#ef4444'}"></span>${hc.healthy?'Healthy · '+hc.latency_ms+'ms':'Unhealthy'}</span>`:'<span style="font-size:.75rem;color:#71717a;">Not checked</span>'}
+            <button class="btn3" onclick="hcProv('${p.id}')">🏥 Healthcheck</button>
+          </div>
+          ${ps.default_provider!==p.id?`<button class="btn2" style="width:100%;margin-top:.75rem;font-size:.75rem;" onclick="setDef('${p.id}')">✓ Set as default</button>`:''}
+        </div>`;
+      }).join('')}
+    </div>`}`;
+}
+
+async function regProv(){
+  try{await P('/providers',{kind:preset.kind,id:form.id||undefined,name:form.name||undefined,api_url:form.api_url,api_key:form.api_key||undefined,model_name:form.model_name});showForm=false;form={id:'',name:'',api_url:preset.apiUrl,api_key:'',model_name:preset.models[0]||''};render();}catch(e){alert('Error: '+e.message)}
+}
+async function rmProv(id){if(!confirm('Remove '+id+'?'))return;await D('/providers/'+id);render();}
+async function hcProv(id){try{healthchecks[id]=await P('/providers/'+id+'/healthcheck',{});}catch(e){healthchecks[id]={healthy:false,error:e.message};}render();}
+async function setDef(id){await P('/providers/default',{id});render();}
+
+function rChat(){
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">💬 Chat <span style="font-size:.75rem;font-weight:400;color:#10b981;">⚡ streaming</span></h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;" id="chatStatus">Loading…</p>
+    <div class="glass" style="padding:1.5rem;overflow-y:auto;max-height:55vh;min-height:300px;" id="chatBox">
+      ${messages.length===0?'<div style="text-align:center;padding:3rem;color:#71717a;">Start a conversation with your AI</div>':messages.map(m=>{
+        if(m.role==='system')return `<div style="text-align:center;margin-bottom:1rem;"><span class="badge b-w">⚠ ${esc(m.content)}</span></div>`;
+        const u=m.role==='user';
+        return `<div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:1rem;flex-direction:${u?'row-reverse':'row'};">
+          <div style="width:2rem;height:2rem;border-radius:50%;background:${u?'rgba(59,130,246,.2)':'rgba(99,102,241,.2)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${u?'👤':'🤖'}</div>
+          <div style="max-width:75%;${u?'text-align:right':''}">
+            <div style="border-radius:1rem;padding:.75rem 1rem;${m.error?'background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3)':u?'background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2)':'background:#16161a;border:1px solid #27272a'}">
+              <p style="font-size:.875rem;white-space:pre-wrap;word-break:break-word;margin:0;">${esc(m.content)}${m.streaming?'<span style="display:inline-block;width:8px;height:14px;background:#6366f1;margin-left:2px;animation:pulse 1s infinite;"></span>':''}</p>
+            </div>
+            ${!u&&!m.error?`<div style="font-size:.6875rem;color:#71717a;margin-top:.375rem;font-family:monospace;">${m.provider||''} · ${m.model||''} ${m.elapsedMs?'· '+m.elapsedMs+'ms':''}</div>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+      
+    </div>
+    <div class="glass" style="padding:1rem;margin-top:1rem;">
+      <div style="display:flex;align-items:flex-end;gap:.75rem;">
+        <textarea class="inp" id="chatInput" placeholder="Message your AI…" rows="1" style="flex:1;min-height:48px;max-height:128px;resize:none;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">${esc(chatInput)}</textarea>
+        <button class="btn1" style="height:48px;" onclick="sendChat()" ${chatSending?'disabled':''}>➤</button>
+      </div>
+      <p style="font-size:.75rem;color:#71717a;margin-top:.5rem;">Press Enter to send · Shift+Enter for new line</p>
+    </div>`;
+  const inp=document.getElementById('chatInput');
+  if(inp){inp.value=chatInput;inp.oninput=()=>{chatInput=inp.value;}}
+  G('/providers').then(r=>{const s=document.getElementById('chatStatus');if(s)s.textContent=r.default_provider?'Using: '+r.default_provider:'No provider configured — add one in Providers';}).catch(()=>{});
+  const box=document.getElementById('chatBox');if(box)box.scrollTop=box.scrollHeight;
+}
+
+async function sendChat(){
+  if(!chatInput.trim()||chatSending)return;
+  let dp;try{dp=(await G('/providers')).default_provider;}catch{dp=null;}
+  if(!dp){messages=[...messages,{role:'system',content:'No provider configured. Add one in the Providers page first.'}];render();return;}
+  const u=chatInput.trim();chatInput='';chatSending=true;
+  // Add user message + empty assistant message that we'll fill via streaming.
+  messages=[...messages,{role:'user',content:u},{role:'assistant',content:'',streaming:true,provider:dp}];render();
+  try{
+    // Use fetch with streaming body (SSE).
+    const resp=await fetch('/api/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:u,system:'You are a helpful AI assistant integrated into the SPS Cognitive Operating System. Be concise and accurate.'})});
+    if(!resp.ok){throw new Error('HTTP '+resp.status+': '+await resp.text());}
+    const reader=resp.body.getReader();const decoder=new TextDecoder();
+    let buffer='';
+    while(true){
+      const {done,value}=await reader.read();
+      if(done)break;
+      buffer+=decoder.decode(value,{stream:true});
+      // SSE events separated by \n\n.
+      const events=buffer.split('\n\n');
+      buffer=events.pop(); // keep incomplete.
+      for(const ev of events){
+        const lines=ev.split('\n');
+        let data='';
+        for(const l of lines){if(l.startsWith('data:'))data+=l.slice(5).trim();}
+        if(!data)continue;
+        try{
+          const j=JSON.parse(data);
+          if(j.type==='token'){
+            // Append to last message.
+            const last=messages[messages.length-1];
+            if(last&&last.role==='assistant'&&last.streaming){
+              last.content+=j.text;render();
+            }
+          }else if(j.type==='done'){
+            const last=messages[messages.length-1];
+            if(last&&last.role==='assistant'){last.streaming=false;last.totalTokens=j.total_tokens;}
+            render();
+          }else if(j.type==='error'){
+            const last=messages[messages.length-1];
+            if(last&&last.role==='assistant'){last.streaming=false;last.error=true;last.content=j.message;}
+            render();
+          }
+        }catch(e){console.warn('parse error',e,data);}
+      }
+    }
+  }catch(e){
+    const last=messages[messages.length-1];
+    if(last&&last.role==='assistant'){last.streaming=false;last.error=true;last.content=e.message;}
+    render();
+  }
+  finally{chatSending=false;render();}
+}
+
+async function rMem(){
+  let s;try{s=await G('/memory');}catch(e){el.innerHTML='<p style="color:#a1a1aa">'+esc(e.message)+'</p>';return}
+  const ms=s.recent_memories||[];
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">🧠 Memory</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">Episodic, semantic, procedural, and conceptual memories</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin-bottom:1.5rem;">
+      ${statBox('Total',s.total||0)}${statBox('Links',s.links||0)}${statBox('Avg strength',((s.avg_strength||0)*100).toFixed(0)+'%')}${statBox('Kinds',Object.keys(s.by_kind||{}).length)}
+    </div>
+    <div class="glass" style="padding:1rem;margin-bottom:1.5rem;">
+      <input class="inp" id="memSearch" placeholder="🔍 Search memories…" onkeydown="if(event.key==='Enter')memSearch()"/>
+    </div>
+    <div id="memList">${ms.length===0?'<div class="glass" style="padding:3rem;text-align:center;color:#71717a;">No memories yet</div>':ms.map(m=>`
+      <div class="glass" style="padding:1rem;margin-bottom:.5rem;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;">
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;">
+              <span class="badge b-${m.kind==='semantic'?'s':m.kind==='episodic'?'a':m.kind==='procedural'?'w':'m'}">${m.kind}</span>
+              <span style="font-weight:500;font-size:.875rem;">${esc(m.title)}</span>
+            </div>
+            ${m.tags&&m.tags.length?`<div style="display:flex;gap:.25rem;flex-wrap:wrap;margin-top:.5rem;">${m.tags.map(t=>`<span class="badge b-m">🏷 ${esc(t)}</span>`).join('')}</div>`:''}
+          </div>
+          <div style="text-align:right;flex-shrink:0;font-size:.75rem;color:#71717a;">${ta(m.created_at)}<br><span style="font-family:monospace;">${(m.strength*100).toFixed(0)}% · ${m.access_count}x</span></div>
+        </div>
+      </div>`).join('')}</div>`;
+}
+
+async function memSearch(){
+  const q=document.getElementById('memSearch').value;if(!q.trim())return;
+  try{const r=await G('/memory/search?q='+encodeURIComponent(q)+'&limit=50');
+    document.getElementById('memList').innerHTML=r.results.length===0?'<div class="glass" style="padding:2rem;text-align:center;color:#71717a;">No matches</div>':r.results.map(m=>`
+      <div class="glass" style="padding:1rem;margin-bottom:.5rem;">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;">
+          <span class="badge b-${m.kind==='semantic'?'s':m.kind==='episodic'?'a':m.kind==='procedural'?'w':'m'}">${m.kind}</span>
+          <span style="font-weight:500;font-size:.875rem;">${esc(m.title)}</span>
+        </div>
+        ${m.content?`<p style="font-size:.75rem;color:#a1a1aa;margin-top:.25rem;">${esc(typeof m.content==='string'?m.content:JSON.stringify(m.content))}</p>`:''}
+      </div>`).join('');
+  }catch(e){alert(e.message)}
+}
+
+function statBox(l,v){return `<div class="stat"><div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#a1a1aa;margin-bottom:.25rem;">${l}</div><div style="font-size:1.5rem;font-weight:700;">${v}</div></div>`}
+
+async function rAg(){
+  let a;try{a=await G('/agents');}catch(e){el.innerHTML='<p style="color:#a1a1aa">'+esc(e.message)+'</p>';return}
+  const colors={architect:'linear-gradient(135deg,#3b82f6,#6366f1)',developer:'linear-gradient(135deg,#10b981,#14b8a6)',reviewer:'linear-gradient(135deg,#f59e0b,#f97316)',tester:'linear-gradient(135deg,#ec4899,#f43f5e)',devops:'linear-gradient(135deg,#8b5cf6,#a855f7)',researcher:'linear-gradient(135deg,#06b6d4,#3b82f6)'};
+  const icons={architect:'🏛',developer:'💻',reviewer:'🔍',tester:'🧪',devops:'🚀',researcher:'📚'};
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">🤖 Agents</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">Six built-in agent archetypes for specialized work</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;">
+      ${a.agents.map(ag=>`<div class="glass" style="padding:1.25rem;">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+          <div style="width:2.5rem;height:2.5rem;border-radius:.75rem;background:${colors[ag.archetype]};display:flex;align-items:center;justify-content:center;font-size:1.25rem;">${icons[ag.archetype]}</div>
+          <div><div style="font-weight:600;">${esc(ag.name)}</div><div style="font-size:.75rem;color:#71717a;text-transform:capitalize;">${ag.archetype}</div></div>
+        </div>
+        <p style="font-size:.75rem;color:#a1a1aa;line-height:1.4;margin-bottom:.75rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">${esc(ag.system_prompt)}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+          ${ag.capabilities.can_read_files?'<span class="badge b-m">read</span>':''}
+          ${ag.capabilities.can_write_files?'<span class="badge b-m">write</span>':''}
+          ${ag.capabilities.can_exec_shell?'<span class="badge b-m">shell</span>':''}
+          ${ag.capabilities.can_call_llm?'<span class="badge b-a">llm</span>':''}
+          ${ag.capabilities.can_delegate?'<span class="badge b-m">delegate</span>':''}
+          ${ag.capabilities.can_create_goals?'<span class="badge b-m">goals</span>':''}
+        </div>
+      </div>`).join('')}
+    </div>`;
+}
+
+async function rGoals(){
+  let g;try{g=await G('/goals');}catch(e){el.innerHTML='<p style="color:#a1a1aa">'+esc(e.message)+'</p>';return}
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">🎯 Goals</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">Goal → Objective → Milestone → Task hierarchy</p>
+    ${g.goals.length===0?'<div class="glass" style="padding:3rem;text-align:center;color:#71717a;">No goals yet</div>':g.goals.map(gl=>`
+      <div class="glass" style="padding:1.25rem;margin-bottom:.75rem;">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;">
+          <span style="font-size:1rem;">${gl.status==='completed'?'✅':gl.status==='active'?'🔵':gl.status==='blocked'?'⛔':'⏳'}</span>
+          <span style="font-weight:600;">${esc(gl.title)}</span>
+          <span class="badge b-${gl.status==='completed'?'s':gl.status==='active'?'a':gl.status==='blocked'?'d':'m'}">${gl.status}</span>
+          ${gl.priority>5?`<span class="badge b-w">P${gl.priority}</span>`:''}
+        </div>
+        ${gl.description?`<p style="font-size:.875rem;color:#a1a1aa;margin-top:.25rem;">${esc(gl.description)}</p>`:''}
+        <div style="display:flex;align-items:center;gap:1rem;margin-top:.75rem;font-size:.75rem;color:#71717a;font-family:monospace;">
+          <span>${gl.id.slice(0,8)}…</span><span>${gl.objectives_count} objectives</span><span>${gl.tasks_total} tasks</span><span>${ta(gl.created_at)}</span>
+        </div>
+      </div>`).join('')}`;
+}
+
+async function rEv(){
+  let e;try{e=await G('/events?limit=200');}catch(err){el.innerHTML='<p style="color:#a1a1aa">'+esc(err.message)+'</p>';return}
+  const evs=e.events.reverse();
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">📜 Event Stream</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">Hash-chained, immutable event log — the source of truth</p>
+    <div class="glass" style="padding:.75rem;margin-bottom:1rem;">
+      <input class="inp" id="evFilter" placeholder="Filter by type…" oninput="filterEvents()"/>
+    </div>
+    <div class="glass" style="overflow:hidden;">
+      <div id="evList" style="max-height:600px;overflow-y:auto;">${evs.map(ev=>`
+        <div style="padding:1rem;border-bottom:1px solid #1f1f23;" class="ev-row">
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.375rem;">
+            <span style="font-size:.75rem;font-family:monospace;color:#71717a;width:3rem;">#${ev.tick}</span>
+            <span class="badge b-a" style="font-family:monospace;font-size:.75rem;">${ev.type}</span>
+            <span style="font-size:.75rem;color:#71717a;margin-left:auto;">⏰ ${new Date(ev.wall_time).toLocaleString()}</span>
+          </div>
+          <div style="font-size:.6875rem;font-family:monospace;color:#71717a;margin-left:3.75rem;"># ${fh(ev.hash,32)}</div>
+        </div>`).join('')}</div>
+    </div>`;
+}
+
+function filterEvents(){
+  const f=document.getElementById('evFilter').value.toLowerCase();
+  document.querySelectorAll('.ev-row').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(f)?'':'none';});
+}
+
+function rConsole(){
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">⌨️ Console</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">Dispatch raw events directly to the kernel</p>
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;">
+      ${['system.booted','owner.profile_created','memory.created'].map(t=>`<button class="btn3" onclick="consoleType='${t}';consolePayload='${t==='memory.created'?'{"id":"00000000-0000-0000-0000-000000000001","kind":"semantic","title":"Test","content":{},"tags":[],"origin_tick":0,"created_at":0}':'{}'}';render()">${t}</button>`).join('')}
+    </div>
+    <div class="glass" style="padding:1rem;margin-bottom:1rem;">
+      <label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#a1a1aa;margin-bottom:.375rem;display:block;">Event type</label>
+      <input class="inp" style="font-family:monospace;" placeholder="e.g. goal.created" value="${esc(consoleType)}" onchange="consoleType=this.value"/>
+      <label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#a1a1aa;margin:.75rem 0 .375rem;display:block;">Payload (JSON)</label>
+      <textarea class="inp" style="font-family:monospace;font-size:.75rem;min-height:100px;" onchange="consolePayload=this.value">${esc(consolePayload)}</textarea>
+      <button class="btn1" style="width:100%;margin-top:.75rem;" onclick="sendConsole()">➤ Dispatch Event</button>
+    </div>
+    <div class="glass" style="padding:1rem;">
+      <h2 style="font-size:.875rem;font-weight:600;margin-bottom:.75rem;">History (${consoleHist.length})</h2>
+      <div style="max-height:400px;overflow-y:auto;">
+        ${consoleHist.length===0?'<p style="font-size:.75rem;color:#71717a;text-align:center;padding:1rem;">No events dispatched yet</p>':consoleHist.slice().reverse().map(h=>`
+          <div style="padding:.75rem;border-radius:.5rem;background:#16161a;border:1px solid #27272a;margin-bottom:.5rem;">
+            <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;">
+              <span class="badge b-a" style="font-family:monospace;font-size:.75rem;">${h.type}</span>
+              ${h.result?`<span style="font-size:.75rem;color:#10b981;">✓ tick ${h.result.tick}</span>`:''}
+              ${h.error?`<span style="font-size:.75rem;color:#ef4444;">✗ ${esc(h.error)}</span>`:''}
+            </div>
+            ${h.result?`<div style="font-size:.625rem;font-family:monospace;color:#71717a;word-break:break-all;">hash: ${h.result.hash}</div>`:''}
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+async function sendConsole(){
+  if(!consoleType.trim())return;
+  let parsed;try{parsed=JSON.parse(consolePayload);}catch{consoleHist=[...consoleHist,{type:consoleType,payload:consolePayload,error:'Invalid JSON'}];render();return;}
+  try{const r=await P('/events',{event_type:consoleType,payload:parsed});consoleHist=[...consoleHist,{type:consoleType,payload:consolePayload,result:r}];}
+  catch(e){consoleHist=[...consoleHist,{type:consoleType,payload:consolePayload,error:e.message}];}
+  render();
+}
+
+async function rSet(){
+  let h;try{h=await G('/health');}catch(e){el.innerHTML='<p style="color:#a1a1aa">'+esc(e.message)+'</p>';return}
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">⚙️ Settings</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">System information and kernel operations</p>
+    <div class="glass" style="padding:1.5rem;margin-bottom:1rem;">
+      <h2 style="font-size:1.125rem;font-weight:600;margin-bottom:1rem;">🖥️ System</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        ${field('Status',h.status)}${field('Backend',h.backend,true)}${field('Kernel booted',h.kernel_booted?'Yes':'No')}${field('Event count',h.event_count,true)}${field('Last tick',h.last_tick,true)}${field('Providers',(h.providers?.length||0),true)}
+      </div>
+    </div>
+    <div class="glass" style="padding:1.5rem;margin-bottom:1rem;">
+      <h2 style="font-size:1.125rem;font-weight:600;margin-bottom:1rem;">🔧 Kernel Operations</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+        <button class="btn2" style="justify-content:flex-start;" onclick="runVerify()">🛡 Verify hash chain</button>
+        <button class="btn2" style="justify-content:flex-start;" onclick="takeSnap()">💾 Take snapshot</button>
+      </div>
+      <div id="opResult" style="margin-top:1rem;"></div>
+    </div>
+    <div class="glass" style="padding:1.5rem;">
+      <h2 style="font-size:1.125rem;font-weight:600;margin-bottom:1rem;">About SPS</h2>
+      <p style="font-size:.875rem;color:#a1a1aa;margin-bottom:.75rem;">SPS is a Cognitive Operating System built on a deterministic, event-sourced kernel. All state changes are hash-chained events; the entire system can be replayed from the event log.</p>
+      <div style="font-size:.75rem;color:#71717a;line-height:1.6;">
+        <div>Version: 1.0.0</div><div>License: MIT OR Apache-2.0</div><div>Architecture: Local-first, single-owner</div><div>Kernel language: Rust</div><div>UI: HTML + Tailwind CSS</div>
+      </div>
+    </div>`;
+}
+
+async function runVerify(){try{const v=await G('/verify');document.getElementById('opResult').innerHTML=`<div style="padding:.75rem;border-radius:.5rem;background:#16161a;border:1px solid #27272a;font-size:.875rem;"><div style="color:${v.failure?'#ef4444':'#10b981'}">${v.failure?'✗ Verification failed':'✓ Chain intact'}</div><div style="font-size:.75rem;color:#a1a1aa;font-family:monospace;margin-top:.25rem;">${v.events_verified} events verified · ${v.elapsed_us}μs</div>${v.failure?`<div style="font-size:.75rem;color:#ef4444;margin-top:.25rem;">${esc(v.failure_detail)}</div>`:''}</div>`;}catch(e){alert(e.message);}}
+async function takeSnap(){try{await P('/snapshot',{});alert('Snapshot taken');}catch(e){alert('Snapshot failed: '+e.message);}}
+
+
+async function rCode(){
+  let stats;try{stats=await G('/code/stats');}catch(e){el.innerHTML='<p style="color:#a1a1aa">'+esc(e.message)+'</p>';return}
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">🔍 Code Intelligence</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">Symbol search, find references, go-to-definition</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin-bottom:1.5rem;">
+      ${statBox('Files',stats.files_indexed||0)}${statBox('Symbols',stats.total_symbols||0)}${statBox('Imports',stats.total_imports||0)}${statBox('Languages',Object.keys(stats.by_language||{}).length)}
+    </div>
+    <div class="glass" style="padding:1rem;margin-bottom:1.5rem;">
+      <input class="inp" id="codeSearch" placeholder="🔍 Search symbols (fuzzy)…" onkeydown="if(event.key==='Enter')codeSearch()"/>
+    </div>
+    <div id="codeResults"></div>
+    ${stats.total_symbols===0?'<div class="glass" style="padding:3rem;text-align:center;color:#71717a;"><p>No files indexed yet.</p><p style="font-size:.75rem;margin-top:.5rem;">Index a file via the API: POST /api/code/index</p></div>':''}
+  `;
+  // Show initial results
+  if(stats.total_symbols>0){codeSearch();}
+}
+async function codeSearch(){
+  const q=document.getElementById('codeSearch').value;
+  const resultsDiv=document.getElementById('codeResults');if(!resultsDiv)return;
+  resultsDiv.innerHTML='<p style="color:#71717a;padding:1rem;">Searching…</p>';
+  try{
+    const r=await G('/code/search?q='+encodeURIComponent(q)+'&limit=50');
+    if(r.results.length===0){resultsDiv.innerHTML='<div class="glass" style="padding:2rem;text-align:center;color:#71717a;">No symbols found</div>';return;}
+    resultsDiv.innerHTML=r.results.map(res=>`
+      <div class="glass" style="padding:.75rem;margin-bottom:.5rem;cursor:pointer;" onclick="findRefs('${esc(res.symbol.name)}')">
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <span style="font-family:monospace;font-size:.875rem;color:#6366f1;width:1.5rem;">${res.symbol.kind==='function'?'ƒ':res.symbol.kind==='struct'?'S':res.symbol.kind==='class'?'C':res.symbol.kind==='enum'?'E':res.symbol.kind==='trait'?'T':'?'}</span>
+          <span style="font-weight:500;font-size:.875rem;">${esc(res.symbol.name)}</span>
+          <span class="badge b-m" style="font-size:.625rem;">${res.symbol.language}</span>
+          <span class="badge b-m" style="font-size:.625rem;">${res.symbol.kind}</span>
+          <span style="font-size:.625rem;color:#71717a;margin-left:auto;font-family:monospace;">${esc(res.symbol.file)}:${res.symbol.line}</span>
+        </div>
+        ${res.symbol.doc_comment?'<p style="font-size:.625rem;color:#71717a;margin-top:.25rem;margin-left:2rem;">'+esc(res.symbol.doc_comment.slice(0,80))+'…</p>':''}
+      </div>`).join('');
+  }catch(e){resultsDiv.innerHTML='<p style="color:#ef4444">'+esc(e.message)+'</p>';}
+}
+async function findRefs(name){
+  try{
+    const r=await G('/code/references/'+encodeURIComponent(name));
+    const resultsDiv=document.getElementById('codeResults');
+    resultsDiv.innerHTML='<h3 style="font-size:1rem;font-weight:600;margin-bottom:.75rem;">References to "'+esc(name)+'" ('+r.count+')</h3>'+
+      r.references.map(ref=>`
+        <div class="glass" style="padding:.75rem;margin-bottom:.5rem;">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;">
+            <span class="badge b-m" style="font-size:.625rem;font-family:monospace;">${esc(ref.file)}:${ref.line}</span>
+          </div>
+          <pre style="font-size:.6875rem;font-family:monospace;color:#a1a1aa;margin:0;overflow-x:auto;">${esc(ref.context)}</pre>
+        </div>`).join('')+
+      '<button class="btn2" style="margin-top:1rem;" onclick="codeSearch()">← Back to search</button>';
+  }catch(e){alert(e.message);}
+}
+
+
+async function rCode(){
+  let stats,files,searchResults=null,searchQ='';
+  try{stats=await G('/code/stats');}catch(e){el.innerHTML='<p style="color:#a1a1aa">'+esc(e.message)+'</p>';return}
+  try{files=await G('/code/files');}catch{files={files:[]};}
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">🔧 Code Explorer</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">Symbol search, references, and codebase index</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin-bottom:1.5rem;">
+      ${statBox('Files',stats.files_indexed||0)}
+      ${statBox('Symbols',stats.total_symbols||0)}
+      ${statBox('Imports',stats.total_imports||0)}
+      ${statBox('Languages',Object.keys(stats.by_language||{}).length)}
+    </div>
+    <div class="glass" style="padding:1rem;margin-bottom:1rem;">
+      <input class="inp" id="codeSearch" placeholder="🔍 Search symbols (e.g. main, parse, struct)…" value="${esc(searchQ)}" oninput="codeSearchQ=this.value" onkeydown="if(event.key==='Enter')doCodeSearch()"/>
+    </div>
+    <div id="codeResults" style="margin-bottom:1.5rem;">
+      ${searchResults?`
+        <h3 style="font-size:1rem;font-weight:600;margin-bottom:.75rem;">Search results (${searchResults.length})</h3>
+        ${searchResults.length===0?'<p style="color:#71717a;font-size:.875rem;">No matches</p>':searchResults.map(r=>`
+          <div class="glass" style="padding:1rem;margin-bottom:.5rem;cursor:pointer;" onclick="showSymbolDetail('${r.symbol.id}')">
+            <div style="display:flex;align-items:center;gap:.75rem;">
+              <div style="width:2rem;height:2rem;border-radius:.5rem;background:rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-weight:600;font-family:monospace;">${r.symbol.icon}</div>
+              <div style="flex:1;">
+                <div style="font-weight:500;font-size:.875rem;">${esc(r.symbol.name)}</div>
+                <div style="font-size:.75rem;color:#71717a;font-family:monospace;">${esc(r.symbol.qualified_name)}</div>
+              </div>
+              <span class="badge b-a">${r.symbol.kind}</span>
+              <span style="font-size:.75rem;color:#71717a;font-family:monospace;">${esc(r.symbol.location.file)}:${r.symbol.location.line}</span>
+            </div>
+          </div>
+        `).join('')}
+      `:''}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div class="glass" style="padding:1.25rem;">
+        <h3 style="font-size:.875rem;font-weight:600;margin-bottom:.75rem;">📊 By Kind</h3>
+        ${Object.entries(stats.by_kind||{}).map(([k,c])=>`<div style="display:flex;justify-content:space-between;font-size:.8125rem;margin-bottom:.375rem;"><span style="color:#a1a1aa;text-transform:capitalize;">${k}</span><span style="font-family:monospace;">${c}</span></div>`).join('')||'<p style="color:#71717a;font-size:.75rem;">No symbols indexed</p>'}
+      </div>
+      <div class="glass" style="padding:1.25rem;">
+        <h3 style="font-size:.875rem;font-weight:600;margin-bottom:.75rem;">📁 By Language</h3>
+        ${Object.entries(stats.by_language||{}).map(([k,c])=>`<div style="display:flex;justify-content:space-between;font-size:.8125rem;margin-bottom:.375rem;"><span style="color:#a1a1aa;text-transform:capitalize;">${k}</span><span style="font-family:monospace;">${c}</span></div>`).join('')||'<p style="color:#71717a;font-size:.75rem;">No languages indexed</p>'}
+      </div>
+    </div>
+    <div class="glass" style="padding:1.25rem;margin-top:1rem;">
+      <h3 style="font-size:.875rem;font-weight:600;margin-bottom:.75rem;">📁 Indexed Files (${files.files?.length||0})</h3>
+      ${files.files?.length===0?'<p style="color:#71717a;font-size:.75rem;">No files indexed. Use POST /api/code/index to add files.</p>':files.files.slice(0,20).map(f=>`<div style="font-size:.75rem;font-family:monospace;color:#a1a1aa;padding:.25rem 0;">${esc(f)}</div>`).join('')}
+    </div>
+  `;
+}
+let codeSearchQ='';
+async function doCodeSearch(){
+  if(!codeSearchQ.trim())return;
+  try{const r=await G('/code/search?q='+encodeURIComponent(codeSearchQ)+'&limit=50');searchResults=r.results;render();}
+  catch(e){alert(e.message);}
+}
+async function showSymbolDetail(id){
+  // For now, just alert the id. In a full UI we'd show a modal.
+  alert('Symbol ID: '+id+'\n(Reference finding coming in next phase)');
+}
+
+
+const COMMANDS = [
+  { label: 'Go to Dashboard', action: () => navigate('dashboard'), icon: '📊' },
+  { label: 'Go to AI Providers', action: () => navigate('providers'), icon: '⚡' },
+  { label: 'Go to Chat', action: () => navigate('chat'), icon: '💬' },
+  { label: 'Go to Memory', action: () => navigate('memory'), icon: '🧠' },
+  { label: 'Go to Agents', action: () => navigate('agents'), icon: '🤖' },
+  { label: 'Go to Goals', action: () => navigate('goals'), icon: '🎯' },
+  { label: 'Go to Events', action: () => navigate('events'), icon: '📜' },
+  { label: 'Go to Console', action: () => navigate('console'), icon: '⌨️' },
+  { label: 'Go to Code Explorer', action: () => navigate('code'), icon: '🔧' },
+  { label: 'Go to Workspace', action: () => navigate('workspace'), icon: '📁' },
+  { label: 'Go to Settings', action: () => navigate('settings'), icon: '⚙️' },
+  { label: 'Take Snapshot', action: async () => { await P('/snapshot',{}); alert('Snapshot taken'); }, icon: '💾' },
+  { label: 'Verify Hash Chain', action: async () => { const v=await G('/verify'); alert(v.failure?'Failed':'OK: '+v.events_verified+' events'); }, icon: '🛡' },
+];
+
+let paletteOpen = false;
+function navigate(p){ page=p; document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active')); document.querySelector(`[data-p="${p}"]`)?.classList.add('active'); closePalette(); render(); }
+function openPalette(){ paletteOpen=true; document.getElementById('palette').style.display='flex'; document.getElementById('paletteInput').value=''; document.getElementById('paletteInput').focus(); filterPalette(); }
+function closePalette(){ paletteOpen=false; document.getElementById('palette').style.display='none'; }
+function filterPalette(){
+  const q=document.getElementById('paletteInput').value.toLowerCase();
+  const results=document.getElementById('paletteResults');
+  const filtered = q ? COMMANDS.filter(c=>c.label.toLowerCase().includes(q)) : COMMANDS;
+  results.innerHTML = filtered.map((c,i)=>`<div class="palette-item" onclick="COMMANDS[${i}].action()" style="padding:.75rem;border-radius:.5rem;cursor:pointer;display:flex;align-items:center;gap:.75rem;font-size:.875rem;" onmouseover="this.style.background='#1c1c21'" onmouseout="this.style.background=''"><span style="font-size:1.25rem;">${c.icon}</span>${c.label}</div>`).join('');
+}
+function handlePaletteKey(e){
+  if(e.key==='Escape') closePalette();
+  if(e.key==='Enter'){ const items=document.querySelectorAll('.palette-item'); if(items.length>0) items[0].click(); }
+}
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){ e.preventDefault(); paletteOpen?closePalette():openPalette(); }
+  if(e.key==='Escape'&&paletteOpen) closePalette();
+});
+
+async function rWorkspace(){
+  let tree=null,scanResult=null,scanPath='';
+  try{ const r=await G('/workspace/tree'); if(!r.error) tree=r; }catch{}
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">📁 Workspace</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">File explorer + workspace scanner</p>
+    <div class="glass" style="padding:1rem;margin-bottom:1rem;">
+      <div style="display:flex;gap:.5rem;">
+        <input class="inp" id="scanPath" placeholder="/path/to/your/project" value="${esc(scanPath)}"/>
+        <button class="btn1" onclick="doScan()">🔍 Scan</button>
+      </div>
+    </div>
+    <div id="wsContent" style="margin-top:1rem;">
+      ${tree&&tree.tree?`
+        <div class="glass" style="padding:1rem;">
+          <h3 style="font-size:.875rem;font-weight:600;margin-bottom:.75rem;">📂 ${esc(tree.root)}</h3>
+          <div style="font-size:.75rem;color:#71717a;margin-bottom:.5rem;">${tree.tree.root?.children?.length||0} items at root</div>
+          <div style="max-height:500px;overflow-y:auto;">
+            ${renderTreeNodes(tree.tree.root?.children||[])}
+          </div>
+        </div>
+      `:'<div class="glass" style="padding:2rem;text-align:center;color:#71717a;">No workspace scanned. Enter a path above and click Scan.</div>'}
+    </div>
+  `;
+}
+function renderTreeNodes(nodes){
+  return nodes.map(n=>`
+    <div style="padding:.25rem 0;padding-left:${n.kind==='dir'?'0':'1rem'};">
+      <span style="cursor:pointer;color:${n.kind==='dir'?'#6366f1':'#a1a1aa'};" onclick="readWsFile('${esc(n.path)}')">
+        ${n.kind==='dir'?'📁':'📄'} ${esc(n.name)}
+      </span>
+      ${n.kind==='file'?`<span style="font-size:.6875rem;color:#71717a;margin-left:.5rem;">${n.size}B</span>`:''}
+    </div>
+    ${n.children&&n.children.length>0?`<div style="padding-left:1rem;">${renderTreeNodes(n.children)}</div>`:''}
+  `).join('');
+}
+async function doScan(){
+  scanPath=document.getElementById('scanPath').value;
+  if(!scanPath.trim())return;
+  try{ const r=await P('/workspace/scan',{path:scanPath}); alert('Scanned: '+r.files+' files, '+r.total_size+' bytes'); render(); }
+  catch(e){ alert('Scan failed: '+e.message); }
+}
+async function readWsFile(path){
+  try{ const r=await fetch('/api/workspace/files/'+path); const f=await r.json(); if(f.error){alert(f.error);return;}
+    alert('File: '+f.path+'\nLines: '+f.lines+'\nSize: '+f.size+' bytes\n\n'+(f.text||'[binary]').slice(0,500));
+  }catch(e){alert(e.message);}
+}
+
+
+async function rGit(){
+  let st=null,br=null;
+  try{st=await G('/git/status');}catch{}
+  try{br=await G('/git/branches');}catch{}
+  el.innerHTML=`
+    <h1 style="font-size:1.875rem;font-weight:700;">🌿 Git</h1>
+    <p style="color:#a1a1aa;margin-top:.25rem;margin-bottom:1.5rem;">Status, branches, blame, and history</p>
+    ${st&&st.error?'<div class="glass" style="padding:1rem;color:#ef4444;">'+esc(st.error)+'</div>':`
+    <div class="glass" style="padding:1.25rem;margin-bottom:1rem;">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+        <h2 style="font-size:1rem;font-weight:600;">📊 Status</h2>
+        ${st?.is_clean?'<span class="badge b-s">✓ Clean</span>':'<span class="badge b-w">'+(st?.entries?.length||0)+' changes</span>'}
+        ${st?.branch?'<span class="badge b-a">🌿 '+esc(st.branch)+'</span>':''}
+      </div>
+      ${st?.entries?.length>0?`
+        <div style="margin-top:.5rem;">
+          ${st.entries.map(e=>`<div style="display:flex;align-items:center;gap:.5rem;padding:.375rem;border-radius:.375rem;background:#16161a;margin-bottom:.25rem;">
+            <span class="badge ${e.staged?'b-a':'b-m'}">${e.kind}</span>
+            <span style="font-family:monospace;font-size:.75rem;color:#a1a1aa;">${esc(e.file)}</span>
+          </div>`).join('')}
+        </div>`:''}
+    </div>`}
+    ${br&&!br.error?`
+    <div class="glass" style="padding:1.25rem;margin-bottom:1rem;">
+      <h2 style="font-size:1rem;font-weight:600;margin-bottom:.75rem;">🌿 Branches</h2>
+      ${br.branches?.map(b=>`<div style="display:flex;align-items:center;gap:.5rem;padding:.375rem;border-radius:.375rem;background:${b.is_current?'rgba(99,102,241,.1)':'#16161a'};margin-bottom:.25rem;">
+        <span>${b.is_current?'★':'○'}</span>
+        <span style="font-size:.875rem;${b.is_current?'font-weight:600;color:#6366f1;':''}">${esc(b.name)}</span>
+        ${b.is_remote?'<span class="badge b-m">remote</span>':''}
+        <span style="font-family:monospace;font-size:.6875rem;color:#71717a;margin-left:auto;">${esc(b.last_commit)}</span>
+      </div>`).join('')||'<p style="color:#71717a;">No branches</p>'}
+    </div>`:''}
+  `;
+}
+
+document.getElementById('nav').addEventListener('click',e=>{const i=e.target.closest('.nav');if(!i)return;document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));i.classList.add('active');page=i.dataset.p;render();});
+render();
+setInterval(()=>{if(page==='dashboard'||page==='events'||page==='goals')render();},3000);
+</script>
+
+<div id="palette" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;align-items:flex-start;justify-content:center;padding-top:15vh;">
+  <div class="glass" style="width:90%;max-width:600px;padding:1rem;">
+    <input id="paletteInput" class="inp" placeholder="Type a command or search…" style="font-size:1rem;" oninput="filterPalette()" onkeydown="handlePaletteKey(event)"/>
+    <div id="paletteResults" style="margin-top:.5rem;max-height:400px;overflow-y:auto;"></div>
+  </div>
+</div>
+
+</body>
+</html>

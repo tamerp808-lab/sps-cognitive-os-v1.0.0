@@ -1,0 +1,38 @@
+[package]
+name = "sps-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS CLI — command-line interface for the Cognitive Operating System"
+
+[[bin]]
+name = "sps"
+path = "src/main.rs"
+
+[lib]
+name = "sps_cli"
+path = "src/lib.rs"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-storage-sqlite = { path = "../sps-storage-sqlite" }
+sps-storage-memory = { path = "../sps-storage-memory" }
+sps-effects = { path = "../sps-effects" }
+sps-bus = { path = "../sps-bus" }
+sps-memory = { path = "../sps-memory" }
+sps-goals = { path = "../sps-goals" }
+sps-agents = { path = "../sps-agents" }
+sps-vectors = { path = "../sps-vectors" }
+sps-providers-http = { path = "../sps-providers-http" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+clap = { version = "4", features = ["derive"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+hex = "0.4"

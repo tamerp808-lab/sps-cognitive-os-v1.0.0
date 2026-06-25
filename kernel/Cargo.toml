@@ -1,0 +1,81 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/sps-core",
+    "crates/sps-storage-memory",
+    "crates/sps-storage-sqlite",
+    "crates/sps-effects",
+    "crates/sps-bus",
+    "crates/sps-memory",
+    "crates/sps-world",
+    "crates/sps-reasoning",
+    "crates/sps-goals",
+    "crates/sps-planner",
+    "crates/sps-execution",
+    "crates/sps-reflection",
+    "crates/sps-improvement",
+    "crates/sps-factory",
+    "crates/sps-autonomy",
+    "crates/sps-providers-http",
+    "crates/sps-vectors",
+    "crates/sps-agents",
+    "crates/sps-cli",
+    "crates/sps-ffi",
+    "crates/sps-integration",
+    "crates/sps-server",
+    "crates/sps-llm",
+    "crates/sps-code-intel",
+    "crates/sps-agent-loop",
+    "crates/sps-workspace",
+    "crates/sps-lsp",
+    "crates/sps-git",
+    "crates/sps-cognitive",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/sps/sps"
+authors = ["SPS Project"]
+
+[workspace.dependencies]
+# Core serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+# Hashing (SHA-256)
+sha2 = "0.10"
+# Error handling
+thiserror = "1"
+anyhow = "1"
+# Logging / tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+# IDs / time (display only — wall_time does NOT participate in hash)
+uuid = { version = "1", features = ["v7", "serde"] }
+# Small string optimization for event types
+smol_str = { version = "0.2", features = ["serde"] }
+# Atomic operations / concurrency
+parking_lot = "0.12"
+# Hex encoding for hashes
+hex = { version = "0.4", features = ["serde"] }
+# Bytes
+bytes = "1"
+# Async runtime (for tokio-based tests + server)
+tokio = { version = "1", features = ["rt", "rt-multi-thread", "macros", "sync", "time", "fs", "io-util", "net"] }
+# SQLite (for storage tests)
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+[profile.dev]
+opt-level = 1
+debug = true
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+
+[profile.test]
+opt-level = 1

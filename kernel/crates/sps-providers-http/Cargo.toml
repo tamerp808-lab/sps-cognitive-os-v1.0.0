@@ -1,0 +1,27 @@
+[package]
+name = "sps-providers-http"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Real HTTP-based LLM providers for SPS (OpenAI, OpenRouter, Anthropic, Ollama, Groq, DeepSeek, LM Studio)"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-effects = { path = "../sps-effects" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
+async-trait = "0.1"
+futures-util = "0.3"
+
+[dev-dependencies]
+wiremock = "0.6"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "test-util"] }

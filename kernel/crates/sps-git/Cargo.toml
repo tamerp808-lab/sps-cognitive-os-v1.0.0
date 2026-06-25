@@ -1,0 +1,19 @@
+[package]
+name = "sps-git"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS Git integration — blame, history, branches, status"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+smol_str.workspace = true
+
+[dev-dependencies]
+tempfile = "3"

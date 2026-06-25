@@ -1,0 +1,17 @@
+[package]
+name = "sps-storage-memory"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "In-memory StoragePort implementation for SPS Kernel (tests)"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+parking_lot.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]

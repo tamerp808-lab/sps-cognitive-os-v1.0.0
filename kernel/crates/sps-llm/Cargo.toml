@@ -1,0 +1,27 @@
+[package]
+name = "sps-llm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS LLM layer — streaming, conversations, tool use, structured output"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-effects = { path = "../sps-effects" }
+sps-providers-http = { path = "../sps-providers-http" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+tokio = { version = "1", features = ["sync", "rt", "macros"] }
+futures-util = "0.3"
+async-stream = "0.3"
+
+[dev-dependencies]
+sps-storage-memory = { path = "../sps-storage-memory" }
+wiremock = "0.6"

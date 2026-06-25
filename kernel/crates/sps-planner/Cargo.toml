@@ -1,0 +1,22 @@
+[package]
+name = "sps-planner"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS Planner (Phase 7) — plan templates, optimization, dependency ordering"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-goals = { path = "../sps-goals" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+
+[dev-dependencies]
+sps-storage-memory = { path = "../sps-storage-memory" }

@@ -1,0 +1,31 @@
+[package]
+name = "sps-lsp"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SPS Language Server Protocol — LSP server for VS Code integration"
+
+[[bin]]
+name = "sps-lsp"
+path = "src/main.rs"
+
+[lib]
+name = "sps_lsp"
+path = "src/lib.rs"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+sps-code-intel = { path = "../sps-code-intel" }
+sps-workspace = { path = "../sps-workspace" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+uuid.workspace = true
+smol_str.workspace = true
+tower-lsp = "0.20"
+tokio = { version = "1", features = ["full"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

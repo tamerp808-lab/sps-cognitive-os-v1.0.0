@@ -1,0 +1,21 @@
+[package]
+name = "sps-storage-sqlite"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "SQLite StoragePort implementation for SPS Kernel (default backend)"
+
+[dependencies]
+sps-core = { path = "../sps-core" }
+rusqlite = { version = "0.32", features = ["bundled"] }
+parking_lot.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+hex.workspace = true
+anyhow.workspace = true
+
+[dev-dependencies]
+tempfile = "3"

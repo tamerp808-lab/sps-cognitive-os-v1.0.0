@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- SPS brand palette — deep neural-indigo with electric-cyan accent -->
+
+    <!-- Primary: Neural Indigo -->
+    <color name="sps_primary">#5B7CFA</color>
+    <color name="sps_primary_dark">#3A56D4</color>
+    <color name="sps_primary_light">#8AA2FF</color>
+
+    <!-- Secondary: Electric Cyan -->
+    <color name="sps_secondary">#00E5FF</color>
+    <color name="sps_secondary_dark">#00B8D4</color>
+
+    <!-- Tertiary: Warm Amber (for warnings/goals) -->
+    <color name="sps_tertiary">#FFB300</color>
+
+    <!-- Surface -->
+    <color name="sps_background">#0A0E1F</color>
+    <color name="sps_surface">#141A2E</color>
+    <color name="sps_surface_variant">#1E2540</color>
+
+    <!-- Text -->
+    <color name="sps_on_primary">#FFFFFF</color>
+    <color name="sps_on_background">#E8ECFB</color>
+    <color name="sps_on_surface">#E8ECFB</color>
+    <color name="sps_on_surface_variant">#9CA3C7</color>
+
+    <!-- Accent states -->
+    <color name="sps_success">#34D399</color>
+    <color name="sps_error">#F87171</color>
+    <color name="sps_warning">#FBBF24</color>
+
+    <!-- Brain glow -->
+    <color name="sps_brain_glow">#7C3AED</color>
+    <color name="sps_brain_active">#06FFE0</color>
+
+    <!-- Legacy (for non-Compose components) -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="ic_launcher_background">#0A0E1F</color>
+</resources>

@@ -1,0 +1,29 @@
+{
+  "name": "sps-vscode",
+  "displayName": "SPS Cognitive OS",
+  "description": "SPS Language Server integration for VS Code",
+  "version": "1.0.0",
+  "publisher": "sps",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Programming Languages", "Other"],
+  "activationEvents": ["onLanguage:rust", "onLanguage:typescript", "onLanguage:python", "onLanguage:go"],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "sps.startServer", "title": "SPS: Start Language Server" },
+      { "command": "sps.stopServer", "title": "SPS: Stop Language Server" },
+      { "command": "sps.search", "title": "SPS: Search Symbols" },
+      { "command": "sps.scanWorkspace", "title": "SPS: Scan Workspace" }
+    ],
+    "configuration": {
+      "title": "SPS",
+      "properties": {
+        "sps.serverPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the sps-lsp binary"
+        }
+      }
+    }
+  }
+}
