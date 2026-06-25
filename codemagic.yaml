@@ -1,17 +1,19 @@
-# SPS Cognitive OS — Codemagic CI Configuration
-# Builds the Android Companion APK on every push / tag.
-
 workflows:
   android-companion:
     name: SPS Companion Android
+
     instance_type: mac_mini_m2
     max_build_duration: 30
+
     environment:
       java: 21
       groups:
         - android
       vars:
-        GRADLE_OPTS: "-Xmx4096m -Dfile.encoding=UTF-8 -XX:+UseParallelGC"
+        GRADLE_OPTS: "-Xmx4096m -Dfile.encoding=UTF-8"
+
+    working_directory: android-companion
+
     triggering:
       events:
         - push
@@ -22,25 +24,11 @@ workflows:
         - pattern: develop
           include: true
       cancel_previous_builds: true
-    scripts:
-      - name: Verify Gradle Wrapper
-        working_dir: android-companion
-        script: |
-          chmod +x gradlew
-          ./gradlew --version
 
-      - name: Build Debug APK
-        working_dir: android-companion
-        script: |
-          ./gradlew assembleDebug --no-daemon --stacktrace
+    scripts:
+      - chmod +x gradlew
+      - ./gradlew --version
+      - ./gradlew assembleDebug --no-daemon --stacktrace
 
     artifacts:
-      - android-companion/app/build/outputs/apk/debug/app-debug.apk
-
-    publishing:
-      email:
-        recipients:
-          - dev@sps.local
-        notify:
-          success: true
-          failure: true
+      - app/build/outputs/apk/debug/app-debug.apk
